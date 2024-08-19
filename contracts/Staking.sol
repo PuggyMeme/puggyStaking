@@ -202,6 +202,10 @@ abstract contract Staking is IStaking{
         return userStakingInfo[_sender].theFistTime + op.rewardTime;
     }
 
+    function getTotalStaking () external view returns ( uint256 ) {
+        return totalDeposit;
+    }
+    
     function _getIndexByTime () internal view returns ( uint256 ) {
         return ( block.timestamp - op.startTime ) / op.rewardTime;   
     }
