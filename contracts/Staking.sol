@@ -92,10 +92,16 @@ abstract contract Staking is IStaking{
 
         uint256 reward = userCalReward(_sender);
 
+        if( totalDepositByTime[_getIndexByTime()] == 0 ) {
+            totalDepositByTime[_getIndexByTime()] = totalDeposit;
+        }
+
         userStakingInfo[_sender].stakingAmount -= _amount;
         userStakingInfo[_sender].indexByTime = _getIndexByTime();
         totalDeposit -= _amount;
 
+        totalDepositByTime[_getIndexByTime()] -= _amount;
+        
         userStakingByTime[_sender][_getIndexByTime()] = userStakingInfo[_sender].stakingAmount;
 
         userStakingInfo[_sender].calReward += reward;
@@ -121,7 +127,7 @@ abstract contract Staking is IStaking{
 
         userStakingInfo[_sender].calReward = 0;
         userStakingInfo[_sender].indexByTime = _getIndexByTime();
-        
+
         token.safeTransfer( _sender, reward);
 
         emit rewardClaimEvent(_sender , reward , block.timestamp );
