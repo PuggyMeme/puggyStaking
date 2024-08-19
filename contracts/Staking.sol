@@ -120,7 +120,8 @@ abstract contract Staking is IStaking{
         require (reward > 0 , "");
 
         userStakingInfo[_sender].calReward = 0;
-
+        userStakingInfo[_sender].indexByTime = _getIndexByTime();
+        
         token.safeTransfer( _sender, reward);
 
         emit rewardClaimEvent(_sender , reward , block.timestamp );
