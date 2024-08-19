@@ -90,11 +90,11 @@ abstract contract Staking is IStaking{
     function _unStaking ( address _sender , uint256 _amount ) internal {
         require ( userStakingInfo[_sender].stakingAmount >= _amount , "");
 
+        uint256 reward = userCalReward(_sender);
+
         userStakingInfo[_sender].stakingAmount -= _amount;
         userStakingInfo[_sender].indexByTime = _getIndexByTime();
         totalDeposit -= _amount;
-
-        uint256 reward = userCalReward(_sender);
 
         userStakingByTime[_sender][_getIndexByTime()] = userStakingInfo[_sender].stakingAmount;
 
@@ -150,7 +150,11 @@ abstract contract Staking is IStaking{
 
         if ( currentIndex == 0 || currentIndex == userStakingInfo[_staker].indexByTime ) {
             return 0;    
-        } 
+        }
+
+        if (userStakingByTime[_staker][userStakingInfo[_staker].indexByTime] == 0) {
+            return 0;
+        }
         
         uint256 tmpTotal = totalDepositByTime[userStakingInfo[_staker].indexByTime];
         uint256 tmpUserStaking = userStakingByTime[_staker][userStakingInfo[_staker].indexByTime];
@@ -205,7 +209,7 @@ abstract contract Staking is IStaking{
     function getTotalStaking () external view returns ( uint256 ) {
         return totalDeposit;
     }
-    
+
     function _getIndexByTime () internal view returns ( uint256 ) {
         return ( block.timestamp - op.startTime ) / op.rewardTime;   
     }
